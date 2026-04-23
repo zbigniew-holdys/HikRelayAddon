@@ -53,7 +53,7 @@
 3. Enable **Start on boot** if desired
 4. Check the **Log** tab — you should see:
    ```
-   [start] Hikvision Relay Server  port=8099
+   [start] Hikvision Relay Server  port=8765
    [start] Relay host: 192.168.1.11:8000  user=admin
    [start] Relays: {0: 'Gate', 1: 'Garage'}
    ```
@@ -67,11 +67,11 @@
 ```yaml
 rest_command:
   trigger_gate:
-    url: "http://localhost:8099/api/relay/0"
+    url: "http://localhost:8765/api/relay/0"
     method: post
     timeout: 10
   trigger_garage:
-    url: "http://localhost:8099/api/relay/1"
+    url: "http://localhost:8765/api/relay/1"
     method: post
     timeout: 10
 ```
@@ -126,7 +126,7 @@ Test the add-on directly from a terminal or browser:
 
 ```bash
 # From HA terminal or SSH add-on:
-curl -X POST http://localhost:8099/api/relay/0
+curl -X POST http://localhost:8765/api/relay/0
 # Expected response:
 # {"ok": true, "relay": 0, "name": "Gate"}
 ```
@@ -141,7 +141,7 @@ curl -X POST http://localhost:8099/api/relay/0
 | `SDK directory not found` | Wrong architecture | Open an issue on GitHub |
 | `Login SDK failed: 7` | Wrong credentials or IP | Check `relay_host`, `relay_user`, `relay_pass` in config |
 | `Login SDK failed: 23` | Device unreachable on port 8000 | Check network/firewall; port 80 is closed on these panels |
-| `{"ok": false}` from HA | rest_command URL wrong | Make sure the add-on is running and URL uses `localhost:8099` |
+| `{"ok": false}` from HA | rest_command URL wrong | Make sure the add-on is running and URL uses `localhost:8765` |
 
 ---
 

@@ -10,9 +10,9 @@ arch:
   - amd64
 
 ports:
-  8099/tcp: 8099
+  8765/tcp: 8765
 ports_description:
-  8099/tcp: "Relay HTTP API"
+  8765/tcp: "Relay HTTP API"
 
 options:
   relay_host: "192.168.1.100"

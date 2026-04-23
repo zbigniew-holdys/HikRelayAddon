@@ -45,7 +45,7 @@ RELAY_USER   = _opts.get('relay_user',   os.environ.get('RELAY_USER',   'admin')
 RELAY_PASS   = _opts.get('relay_pass',   os.environ.get('RELAY_PASS',   ''))
 RELAY_0_NAME = _opts.get('relay_0_name', os.environ.get('RELAY_0_NAME', 'Gate'))
 RELAY_1_NAME = _opts.get('relay_1_name', os.environ.get('RELAY_1_NAME', 'Garage'))
-HTTP_PORT    = int(_opts.get('http_port',    os.environ.get('HTTP_PORT',    '8099')))
+HTTP_PORT    = int(_opts.get('http_port',    os.environ.get('HTTP_PORT',    '8765')))
 SDK_DIR      = '/opt/hik-sdk'
 
 RELAY_NAMES  = {0: RELAY_0_NAME, 1: RELAY_1_NAME}

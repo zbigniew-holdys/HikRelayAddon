@@ -103,11 +103,11 @@ After installing and starting the add-on, add to `configuration.yaml`:
 ```yaml
 rest_command:
   trigger_gate:
-    url: "http://localhost:8099/api/relay/0"
+    url: "http://localhost:8765/api/relay/0"
     method: post
     timeout: 10
   trigger_garage:
-    url: "http://localhost:8099/api/relay/1"
+    url: "http://localhost:8765/api/relay/1"
     method: post
     timeout: 10
 ```
