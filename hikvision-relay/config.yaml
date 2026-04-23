@@ -1,6 +1,6 @@
 name: "Hikvision Relay"
 description: "Direct alarm output control for Hikvision DS-KH6320-WTE1 via binary SDK (port 8000)"
-version: "1.0.0"
+version: "1.0.1"
 slug: "hikvision-relay"
 url: "https://github.com/zbigniew-holdys/HikRelayAddon"
 init: false
