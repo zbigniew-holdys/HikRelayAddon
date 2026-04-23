@@ -1,0 +1,4 @@
+# Ignoruj chwilowe pliki (SDK jest celowo commitowany — duże pliki binarne)
+__pycache__/
+*.pyc
+.DS_Store

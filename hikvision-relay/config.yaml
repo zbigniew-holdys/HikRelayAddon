@@ -1,0 +1,31 @@
+name: "Hikvision Relay"
+description: "Bezpośrednia kontrola przekaźników Hikvision DS-KH6320-WTE1 przez SDK (port 8000)"
+version: "1.0.0"
+slug: "hikvision-relay"
+url: "https://github.com/TWOJE_REPO/hikvision-relay-addon"
+init: false
+
+arch:
+  - aarch64
+  - amd64
+
+ports:
+  8099/tcp: 8099
+ports_description:
+  8099/tcp: "Relay HTTP API"
+
+options:
+  relay_host: "192.168.20.11"
+  relay_port: 8000
+  relay_user: "admin"
+  relay_pass: ""
+  relay_0_name: "Brama"
+  relay_1_name: "Garaz"
+
+schema:
+  relay_host: str
+  relay_port: int
+  relay_user: str
+  relay_pass: str
+  relay_0_name: str
+  relay_1_name: str
