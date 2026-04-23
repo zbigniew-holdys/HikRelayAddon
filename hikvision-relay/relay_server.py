@@ -1,17 +1,25 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Hikvision Relay HTTP API Server — HA Add-on
-Kontroluje wyjscia alarmowe DS-KH6320-WTE1 przez Hikvision SDK (port 8000).
+Hikvision Relay HTTP API Server — Home Assistant Add-on
 
-Endpoints:
-  GET  /              — info (lista przekaznikow)
-  GET  /api/relay     — lista przekaznikow JSON
-  POST /api/relay/0   — uruchom przekaznik 0 (Brama)
-  POST /api/relay/1   — uruchom przekaznik 1 (Garaz)
+Controls alarm outputs on a Hikvision DS-KH6320-WTE1 indoor panel via the
+Hikvision binary SDK protocol (port 8000).  Configuration is read from
+/data/options.json (injected by HA Supervisor) with fallback to environment
+variables.
 
-Body POST (opcjonalny JSON):
+Endpoints
+---------
+GET  /              List configured relays (JSON)
+GET  /api/relay     Same as above
+POST /api/relay/0   Trigger relay 0
+POST /api/relay/1   Trigger relay 1
+
+Optional POST body (JSON)
+-------------------------
   {"pulse": true, "duration": 1.5}
+  pulse=true  — open relay, wait <duration> seconds, then close it
+  pulse=false — open relay and leave it open (default)
 """
 import ctypes
 import json
@@ -20,7 +28,7 @@ import threading
 import time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
-# ---- Konfiguracja z /data/options.json (HA Add-on) lub env vars ----
+# ---- Configuration: /data/options.json (HA Supervisor) or environment variables ----
 
 _HA_OPTIONS = '/data/options.json'
 _opts: dict = {}
@@ -31,18 +39,18 @@ if os.path.exists(_HA_OPTIONS):
     except (OSError, json.JSONDecodeError):
         pass
 
-RELAY_HOST   = _opts.get('relay_host',   os.environ.get('RELAY_HOST',   '192.168.20.11'))
+RELAY_HOST   = _opts.get('relay_host',   os.environ.get('RELAY_HOST',   '192.168.1.100'))
 RELAY_PORT   = int(_opts.get('relay_port',   os.environ.get('RELAY_PORT',   '8000')))
 RELAY_USER   = _opts.get('relay_user',   os.environ.get('RELAY_USER',   'admin'))
 RELAY_PASS   = _opts.get('relay_pass',   os.environ.get('RELAY_PASS',   ''))
-RELAY_0_NAME = _opts.get('relay_0_name', os.environ.get('RELAY_0_NAME', 'Brama'))
-RELAY_1_NAME = _opts.get('relay_1_name', os.environ.get('RELAY_1_NAME', 'Garaz'))
+RELAY_0_NAME = _opts.get('relay_0_name', os.environ.get('RELAY_0_NAME', 'Gate'))
+RELAY_1_NAME = _opts.get('relay_1_name', os.environ.get('RELAY_1_NAME', 'Garage'))
 HTTP_PORT    = int(_opts.get('http_port',    os.environ.get('HTTP_PORT',    '8099')))
 SDK_DIR      = '/opt/hik-sdk'
 
 RELAY_NAMES  = {0: RELAY_0_NAME, 1: RELAY_1_NAME}
 
-# ---- ctypes: typy SDK ----
+# ---- ctypes: SDK type aliases ----
 
 _BOOL  = ctypes.c_bool
 _WORD  = ctypes.c_ushort
@@ -88,7 +96,7 @@ class _XMLOut(ctypes.Structure):
     ]
 
 
-# ---- Inicjalizacja SDK ----
+# ---- SDK initialisation ----
 
 _relay_sdk:  object  = None
 _relay_lock: threading.Lock = threading.Lock()
@@ -99,7 +107,7 @@ def _get_sdk():
     if _relay_sdk is not None:
         return _relay_sdk
     if not os.path.isdir(SDK_DIR):
-        raise RuntimeError(f"Brak katalogu SDK: {SDK_DIR}")
+        raise RuntimeError(f"SDK directory not found: {SDK_DIR}")
     for dep in ("libhpr.so", "libcrypto.so", "libssl.so", "libHCCore.so"):
         p = os.path.join(SDK_DIR, dep)
         if os.path.exists(p):
@@ -179,7 +187,7 @@ def trigger_relay(relay_id: int, pulse: bool = False, duration: float = 1.0) -> 
             sdk.NET_DVR_Logout_V30(uid)
 
 
-# ---- HTTP Handler ----
+# ---- HTTP request handler ----
 
 class RelayHandler(BaseHTTPRequestHandler):
     def log_message(self, fmt, *args):
