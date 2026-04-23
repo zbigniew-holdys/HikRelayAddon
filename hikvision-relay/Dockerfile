@@ -1,8 +1,8 @@
-ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base:latest
+ARG BUILD_FROM=ghcr.io/home-assistant/aarch64-base-debian:latest
 FROM ${BUILD_FROM}
 
-# Install Python3 (libuuid.so.1 is bundled in sdk/ directory)
-RUN apk add --no-cache python3
+# Install Python3 (Debian/glibc base — required by Hikvision SDK binaries)
+RUN apt-get update && apt-get install -y --no-install-recommends python3 && rm -rf /var/lib/apt/lists/*
 
 # Copy Hikvision SDK for the right architecture
 ARG BUILD_ARCH=aarch64
