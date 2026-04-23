@@ -108,7 +108,7 @@ def _get_sdk():
         return _relay_sdk
     if not os.path.isdir(SDK_DIR):
         raise RuntimeError(f"SDK directory not found: {SDK_DIR}")
-    for dep in ("libhpr.so", "libcrypto.so", "libssl.so", "libHCCore.so"):
+    for dep in ("libuuid.so.1", "libhpr.so", "libcrypto.so", "libssl.so", "libHCCore.so"):
         p = os.path.join(SDK_DIR, dep)
         if os.path.exists(p):
             try:
